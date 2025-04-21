@@ -126,7 +126,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
                 Text(mensaje, style: const TextStyle(color: Colors.red)),
                 const SizedBox(height: 16),
-
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegistroScreen()),
+                    );
+                  },
+                  child: const Text("¿No tienes cuenta? Regístrate aquí"),
+                )
               ],
             ),
           ),

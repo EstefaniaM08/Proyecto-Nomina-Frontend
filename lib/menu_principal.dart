@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 import 'login.dart';
 
 class MenuPrincipal extends StatelessWidget {
@@ -58,16 +59,78 @@ class MenuPrincipal extends StatelessWidget {
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text("Cerrar sesión", style: TextStyle(color: Colors.red)),
               onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Cerrar sesión"),
+                    content: const Text("¿Estás seguro de que deseas cerrar sesión?"),
+                    actions: [
+                      TextButton(
+                        child: const Text("Cancelar"),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        child: const Text("Cerrar sesión"),
+                        onPressed: () {
+                          Navigator.pop(context); // cerrar diálogo
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
               },
             )
           ],
         ),
       ),
-      body: const Center(
-        child: Text(
-          "Selecciona una opción en el menú",
-          style: TextStyle(fontSize: 18),
+
+      // CENTRO DE LA PANTALLA
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Card(
+            elevation: 8,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            color: Colors.blue.shade50,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.dashboard_customize, size: 50, color: Colors.blue.shade700),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "¡Bienvenido de nuevo!",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    email,
+                    style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Selecciona una opción del menú lateral para comenzar.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -78,7 +141,7 @@ class MenuPrincipal extends StatelessWidget {
       leading: Icon(icon),
       title: Text(text),
       onTap: () {
-        Navigator.pop(context); // Cierra el drawer
+        Navigator.pop(context); // cerrar drawer
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Acción seleccionada: $text")),
         );
