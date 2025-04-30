@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
 import 'login.dart';
+import 'registro_empleado.dart'; // 👈 importa aquí
 
 class MenuPrincipal extends StatelessWidget {
   final String email;
@@ -38,9 +38,31 @@ class MenuPrincipal extends StatelessWidget {
               leading: const Icon(Icons.people),
               title: const Text("Personal"),
               children: [
-                _buildItem(context, Icons.person_add, "Registrar Empleado"),
-                _buildItem(context, Icons.people_outline, "Consultar Empleados"),
-                _buildItem(context, Icons.edit_note, "Modificar"),
+                ListTile(
+                  leading: const Icon(Icons.person_add),
+                  title: const Text("Registrar Empleado"),
+                  onTap: () {
+                    Navigator.pop(context); // Cierra Drawer
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegistroEmpleadoScreen()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.people_outline),
+                  title: const Text("Consultar Empleados"),
+                  onTap: () {
+                    // Acción futura
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit_note),
+                  title: const Text("Modificar"),
+                  onTap: () {
+                    // Acción futura
+                  },
+                ),
               ],
             ),
 
@@ -49,8 +71,16 @@ class MenuPrincipal extends StatelessWidget {
               leading: const Icon(Icons.attach_money),
               title: const Text("Pagos"),
               children: [
-                _buildItem(context, Icons.add_card, "Generar Nómina"),
-                _buildItem(context, Icons.receipt_long, "Consultar Nóminas"),
+                ListTile(
+                  leading: const Icon(Icons.add_card),
+                  title: const Text("Generar Nómina"),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.receipt_long),
+                  title: const Text("Consultar Nóminas"),
+                  onTap: () {},
+                ),
               ],
             ),
 
@@ -73,7 +103,7 @@ class MenuPrincipal extends StatelessWidget {
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         child: const Text("Cerrar sesión"),
                         onPressed: () {
-                          Navigator.pop(context); // cerrar diálogo
+                          Navigator.pop(context); // Cierra el diálogo
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -84,12 +114,11 @@ class MenuPrincipal extends StatelessWidget {
                   ),
                 );
               },
-            )
+            ),
           ],
         ),
       ),
 
-      // CENTRO DE LA PANTALLA
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -133,19 +162,6 @@ class MenuPrincipal extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildItem(BuildContext context, IconData icon, String text) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(text),
-      onTap: () {
-        Navigator.pop(context); // cerrar drawer
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Acción seleccionada: $text")),
-        );
-      },
     );
   }
 }
