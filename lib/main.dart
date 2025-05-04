@@ -1,28 +1,45 @@
 import 'package:flutter/material.dart';
-import 'login.dart';
+import 'package:provider/provider.dart';
+
+import 'viewmodels/login_viewmodel.dart';
+import 'viewmodels/registro_empleado_viewmodel.dart';
+import 'viewmodels/consulta_empleados_viewmodel.dart';
+
+import 'views/login.dart';
+import 'views/registro_empleado.dart';
+import 'views/consulta_empleados.dart';
+import 'views/menu_principal.dart'; // <-- ubicación correcta
 
 void main() {
-  runApp(const NominaApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => RegistroEmpleadoViewModel()),
+        ChangeNotifierProvider(create: (_) => ConsultaEmpleadosViewModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class NominaApp extends StatelessWidget {
-  const NominaApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'App Nómina',
+      title: 'Sistema de Nómina',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: const Color(0xFFF2F5FA),
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-          ),
-        ),
-      ),
-      home: const LoginScreen(), // <- usa la clase importada desde login.dart
+      initialRoute: '/',
+      routes: {
+        '/': (_) => const LoginScreen(),
+        '/registro': (_) => const RegistroEmpleadoScreen(),
+        '/consulta': (_) => const ConsultaEmpleadosScreen(),
+        '/menu': (_) => const MenuPrincipalScreen(
+              email: 'usuario@email.com', // Valor temporal de ejemplo
+            ),
+      },
     );
   }
 }

@@ -3,10 +3,10 @@ import 'login.dart';
 import 'registro_empleado.dart';
 import 'consulta_empleados.dart';
 
-class MenuPrincipal extends StatelessWidget {
+class MenuPrincipalScreen extends StatelessWidget {
   final String email;
 
-  const MenuPrincipal({super.key, required this.email});
+  const MenuPrincipalScreen({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class MenuPrincipal extends StatelessWidget {
                   leading: const Icon(Icons.person_add),
                   title: const Text("Registrar Empleado"),
                   onTap: () {
-                    Navigator.pop(context); // Cierra Drawer
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -54,7 +54,7 @@ class MenuPrincipal extends StatelessWidget {
                   leading: const Icon(Icons.people_outline),
                   title: const Text("Consultar Empleados"),
                   onTap: () {
-                    Navigator.pop(context); // Cierra Drawer
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -63,18 +63,10 @@ class MenuPrincipal extends StatelessWidget {
                     );
                   },
                 ),
-
-                ListTile(
-                  leading: const Icon(Icons.edit_note),
-                  title: const Text("Modificar"),
-                  onTap: () {
-                    // Acción futura
-                  },
-                ),
               ],
             ),
 
-            // Sección: Pagos
+            // Sección: Pagos (placeholder)
             ExpansionTile(
               leading: const Icon(Icons.attach_money),
               title: const Text("Pagos"),
@@ -102,41 +94,37 @@ class MenuPrincipal extends StatelessWidget {
               onTap: () {
                 showDialog(
                   context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: const Text("Cerrar sesión"),
-                        content: const Text(
-                          "¿Estás seguro de que deseas cerrar sesión?",
-                        ),
-                        actions: [
-                          TextButton(
-                            child: const Text("Cancelar"),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                            ),
-                            child: const Text("Cerrar sesión"),
-                            onPressed: () {
-                              Navigator.pop(context); // Cierra el diálogo
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const LoginScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                  builder: (context) => AlertDialog(
+                    title: const Text("Cerrar sesión"),
+                    content: const Text("¿Estás seguro de que deseas cerrar sesión?"),
+                    actions: [
+                      TextButton(
+                        child: const Text("Cancelar"),
+                        onPressed: () => Navigator.pop(context),
                       ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        child: const Text("Cerrar sesión"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LoginScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
           ],
         ),
       ),
-
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),

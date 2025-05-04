@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart';
+import '../services/api_service.dart';
 
 class RegistroScreen extends StatefulWidget {
   const RegistroScreen({super.key});
@@ -13,6 +13,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
   final emailController = TextEditingController();
   final pass1Controller = TextEditingController();
   final pass2Controller = TextEditingController();
+
   String mensaje = '';
   bool cargando = false;
   bool mostrarPass1 = false;
@@ -27,29 +28,23 @@ class _RegistroScreenState extends State<RegistroScreen> {
     });
 
     try {
-      final respuesta = await registrarUsuario(
+      final respuesta = await ApiService.registrarUsuario(
         emailController.text.trim(),
         pass1Controller.text,
       );
 
       if (respuesta == "correo_existente") {
-        setState(() {
-          mensaje = "⚠️ El correo ya está registrado";
-        });
-      } else if (respuesta == "ok") {
+        setState(() => mensaje = "⚠️ El correo ya está registrado");
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("✅ Usuario registrado con éxito")),
         );
         Navigator.pop(context); // Volver al login
       }
     } catch (e) {
-      setState(() {
-        mensaje = "❌ Error al registrar usuario";
-      });
+      setState(() => mensaje = "❌ Error al registrar usuario");
     } finally {
-      setState(() {
-        cargando = false;
-      });
+      setState(() => cargando = false);
     }
   }
 
@@ -95,19 +90,15 @@ class _RegistroScreenState extends State<RegistroScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(mostrarPass1 ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          mostrarPass1 = !mostrarPass1;
-                        });
-                      },
+                      onPressed: () => setState(() => mostrarPass1 = !mostrarPass1),
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) return "Campo obligatorio";
                     if (value.length < 8) return "Mínimo 8 caracteres";
-                    if (!RegExp(r'[A-Z]').hasMatch(value)) return "Debe contener al menos una mayúscula";
-                    if (!RegExp(r'[a-z]').hasMatch(value)) return "Debe contener al menos una minúscula";
-                    if (!RegExp(r'[0-9]').hasMatch(value)) return "Debe contener al menos un número";
+                    if (!RegExp(r'[A-Z]').hasMatch(value)) return "Debe tener al menos una mayúscula";
+                    if (!RegExp(r'[a-z]').hasMatch(value)) return "Debe tener al menos una minúscula";
+                    if (!RegExp(r'[0-9]').hasMatch(value)) return "Debe tener al menos un número";
                     return null;
                   },
                 ),
@@ -122,11 +113,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(mostrarPass2 ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          mostrarPass2 = !mostrarPass2;
-                        });
-                      },
+                      onPressed: () => setState(() => mostrarPass2 = !mostrarPass2),
                     ),
                   ),
                   validator: (value) {
