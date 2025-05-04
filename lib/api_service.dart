@@ -125,3 +125,59 @@ Future<void> registrarEmpleado({
     print('❌ Error: \${response.body}');
   }
 }
+
+
+Future<List<dynamic>> buscarEmpleados(Map<String, dynamic> filtros) async {
+  final url = Uri.parse('http://10.0.2.2:8080/personal/busqueda-personas'); // Usa localhost si no es emulador
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(filtros),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body); // lista de empleados
+    } else {
+      throw Exception('Error ${response.statusCode}: ${response.body}');
+    }
+  } catch (e) {
+    throw Exception('❌ Error buscando empleados: $e');
+  }
+}
+
+Future<void> cargarCombosDesdeUi({
+  required Function(Map<String, dynamic>) onSuccess,
+  required Function(Object) onError,
+}) async {
+  try {
+    final data = await cargarCombos(); // esta debe ser tu función ya existente
+    onSuccess(data);
+  } catch (e) {
+    onError(e);
+  }
+}
+
+Future<void> buscarEmpleadosDesdeUi(
+  String identificacion,
+  String apellidos,
+  String? area,
+  String? cargo,
+  Function(List<dynamic>) onSuccess,
+  Function(Object) onError,
+) async {
+  final filtros = {
+    "identificacion": identificacion,
+    "apellidos": apellidos,
+    "area": area ?? '',
+    "cargo": cargo ?? '',
+  };
+
+  try {
+    final data = await buscarEmpleados(filtros); // esta también debe estar ya definida
+    onSuccess(data);
+  } catch (e) {
+    onError(e);
+  }
+}

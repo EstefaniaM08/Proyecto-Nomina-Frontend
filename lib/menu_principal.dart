@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
-import 'registro_empleado.dart'; // 👈 importa aquí
+import 'registro_empleado.dart';
+import 'consulta_empleados.dart';
 
 class MenuPrincipal extends StatelessWidget {
   final String email;
@@ -10,9 +11,7 @@ class MenuPrincipal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Menú Principal"),
-      ),
+      appBar: AppBar(title: const Text("Menú Principal")),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -45,7 +44,9 @@ class MenuPrincipal extends StatelessWidget {
                     Navigator.pop(context); // Cierra Drawer
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const RegistroEmpleadoScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const RegistroEmpleadoScreen(),
+                      ),
                     );
                   },
                 ),
@@ -53,9 +54,16 @@ class MenuPrincipal extends StatelessWidget {
                   leading: const Icon(Icons.people_outline),
                   title: const Text("Consultar Empleados"),
                   onTap: () {
-                    // Acción futura
+                    Navigator.pop(context); // Cierra Drawer
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ConsultaEmpleadosScreen(),
+                      ),
+                    );
                   },
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.edit_note),
                   title: const Text("Modificar"),
@@ -87,31 +95,41 @@ class MenuPrincipal extends StatelessWidget {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text("Cerrar sesión", style: TextStyle(color: Colors.red)),
+              title: const Text(
+                "Cerrar sesión",
+                style: TextStyle(color: Colors.red),
+              ),
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Cerrar sesión"),
-                    content: const Text("¿Estás seguro de que deseas cerrar sesión?"),
-                    actions: [
-                      TextButton(
-                        child: const Text("Cancelar"),
-                        onPressed: () => Navigator.pop(context),
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text("Cerrar sesión"),
+                        content: const Text(
+                          "¿Estás seguro de que deseas cerrar sesión?",
+                        ),
+                        actions: [
+                          TextButton(
+                            child: const Text("Cancelar"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            child: const Text("Cerrar sesión"),
+                            onPressed: () {
+                              Navigator.pop(context); // Cierra el diálogo
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                        child: const Text("Cerrar sesión"),
-                        onPressed: () {
-                          Navigator.pop(context); // Cierra el diálogo
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => const LoginScreen()),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
                 );
               },
             ),
@@ -124,7 +142,9 @@ class MenuPrincipal extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           child: Card(
             elevation: 8,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             color: Colors.blue.shade50,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
@@ -134,7 +154,11 @@ class MenuPrincipal extends StatelessWidget {
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: Colors.white,
-                    child: Icon(Icons.dashboard_customize, size: 50, color: Colors.blue.shade700),
+                    child: Icon(
+                      Icons.dashboard_customize,
+                      size: 50,
+                      color: Colors.blue.shade700,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -148,7 +172,10 @@ class MenuPrincipal extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     email,
-                    style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   const Text(
