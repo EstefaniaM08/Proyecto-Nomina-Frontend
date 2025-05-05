@@ -1,4 +1,3 @@
-// lib/services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/usuario.dart';
@@ -17,7 +16,7 @@ class ApiService {
     if (response.statusCode == 200) {
       final token = response.body;
       if (token != "FAIL") {
-        return usuario; // autenticación exitosa
+        return usuario;
       }
     }
     return null;
@@ -32,35 +31,26 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return response.body;
+      return utf8.decode(response.bodyBytes);
     } else {
       throw Exception('Error al registrar usuario');
-    }
-  }
-
-  /// Obtener listas como áreas, cargos, bancos, etc.
-  static Future<List<Map<String, dynamic>>> obtenerLista(String entidad) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/$entidad'),
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return List<Map<String, dynamic>>.from(data);
-    } else {
-      throw Exception('Error al obtener $entidad');
     }
   }
 
   /// Registrar empleado
   static Future<bool> registrarEmpleado(Map<String, dynamic> empleado) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/empleados/registrar'),
+      Uri.parse('$baseUrl/personal/registrar-persona'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(empleado),
     );
 
-    return response.statusCode == 200;
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('❌ Error en el registro: ${utf8.decode(response.bodyBytes)}');
+      return false;
+    }
   }
 
   /// Buscar empleados
@@ -72,10 +62,40 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
+      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       return List<Map<String, dynamic>>.from(data);
     } else {
       throw Exception('Error al buscar empleados');
+    }
+  }
+
+  /// Cargar todos los combos (áreas, cargos, etc.)
+  static Future<Map<String, List<Map<String, dynamic>>>> cargarCombos() async {
+    final urls = {
+      'areas': '$baseUrl/cargar/areas',
+      'cargos': '$baseUrl/cargar/cargos',
+      'bancos': '$baseUrl/cargar/bancos',
+      'eps': '$baseUrl/cargar/eps',
+      'pensiones': '$baseUrl/cargar/pensiones',
+      'contratos': '$baseUrl/cargar/contratos',
+    };
+
+    try {
+      final responses = await Future.wait(
+        urls.values.map((url) => http.get(Uri.parse(url))),
+      );
+
+      return {
+        'areas': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[0].bodyBytes))),
+        'cargos': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[1].bodyBytes))),
+        'bancos': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[2].bodyBytes))),
+        'eps': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[3].bodyBytes))),
+        'pensiones': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[4].bodyBytes))),
+        'contratos': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[5].bodyBytes))),
+      };
+    } catch (e) {
+      print('❌ Error cargando combos: $e');
+      rethrow;
     }
   }
 }

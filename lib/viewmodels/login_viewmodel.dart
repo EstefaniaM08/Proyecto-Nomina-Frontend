@@ -1,44 +1,56 @@
-// lib/viewmodels/login_viewmodel.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/usuario.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  final formKey = GlobalKey<FormState>();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  String mensaje = '';
   bool cargando = false;
+  String mensaje = '';
 
-  Future<void> login(BuildContext context) async {
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      mensaje = 'Por favor ingrese su correo y contraseña.';
-      notifyListeners();
-      return;
-    }
+  Future<bool> login() async {
+    if (!formKey.currentState!.validate()) return false;
 
     cargando = true;
+    mensaje = '';
     notifyListeners();
 
-    try {
-      final usuario = Usuario(email: email, password: password);
-      final resultado = await ApiService.login(usuario);
+    final usuario = Usuario(
+      email: emailController.text.trim(),
+      password: passwordController.text,
+    );
 
-      if (resultado != null) {
-        mensaje = 'Inicio de sesión exitoso.';
-        Navigator.pushReplacementNamed(context, '/menu');
-      } else {
-        mensaje = 'Credenciales incorrectas.';
+    try {
+      final usuarioAutenticado = await ApiService.login(usuario);
+
+      if (usuarioAutenticado == null) {
+        mensaje = "❌ Credenciales incorrectas";
+        return false;
       }
+
+      return true;
     } catch (e) {
-      mensaje = 'Error al iniciar sesión.';
+      mensaje = "❌ Error: ${e.toString()}";
+      return false;
     } finally {
       cargando = false;
       notifyListeners();
     }
+  }
+
+  String? validarEmail(String? value) {
+    if (value == null || value.isEmpty) return "El correo es obligatorio";
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(value)) return "Ingrese un correo válido";
+    return null;
+  }
+
+  String? validarPassword(String? value) {
+    if (value == null || value.isEmpty) return "La contraseña es obligatoria";
+    return null;
   }
 
   @override

@@ -1,74 +1,58 @@
-// lib/viewmodels/consulta_empleados_viewmodel.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
 class ConsultaEmpleadosViewModel extends ChangeNotifier {
-  final TextEditingController identificacionController = TextEditingController();
-  final TextEditingController apellidosController = TextEditingController();
-
-  List<Map<String, dynamic>> resultados = [];
   List<String> areas = [];
   List<String> cargos = [];
+  String? areaSeleccionada;
+  String? cargoSeleccionado;
 
-  String mensaje = '';
-  bool cargando = false;
-
-  String? _areaSeleccionada;
-  String? _cargoSeleccionado;
-
-  String? get areaSeleccionada => _areaSeleccionada;
-  String? get cargoSeleccionado => _cargoSeleccionado;
-
-  set areaSeleccionada(String? value) {
-    _areaSeleccionada = value;
-    notifyListeners();
-  }
-
-  set cargoSeleccionado(String? value) {
-    _cargoSeleccionado = value;
-    notifyListeners();
-  }
+  List<Map<String, dynamic>> resultados = [];
 
   Future<void> cargarCombos() async {
     try {
-      final areasData = await ApiService.obtenerLista('areas');
-      final cargosData = await ApiService.obtenerLista('cargos');
-      areas = areasData.map((e) => e['nombre'].toString()).toList();
-      cargos = cargosData.map((e) => e['nombre'].toString()).toList();
+      final data = await ApiService.cargarCombos();
+      areas = List<String>.from((data['areas'] ?? []).map((e) => e['nombre'].toString()));
+      cargos = List<String>.from((data['cargos'] ?? []).map((e) => e['nombre'].toString()));
       notifyListeners();
     } catch (e) {
-      mensaje = 'Error al cargar combos';
-      notifyListeners();
+      debugPrint('Error al cargar combos: \$e');
     }
   }
 
-  Future<void> buscarEmpleados() async {
-    cargando = true;
-    notifyListeners();
-
-    final filtros = {
-      'identificacion': identificacionController.text,
-      'apellidos': apellidosController.text,
-      'area': _areaSeleccionada ?? '',
-      'cargo': _cargoSeleccionado ?? '',
-    };
-
+  Future<void> buscarEmpleados(
+    String identificacion,
+    String apellidos,
+  ) async {
     try {
-      final data = await ApiService.buscarEmpleados(filtros);
+      final data = await ApiService.buscarEmpleados({
+        "identificacion": identificacion,
+        "apellidos": apellidos,
+        "area": areaSeleccionada ?? '',
+        "cargo": cargoSeleccionado ?? '',
+      });
+
       resultados = List<Map<String, dynamic>>.from(data);
-      mensaje = 'Se encontraron ${resultados.length} resultados';
-    } catch (e) {
-      mensaje = 'Error al buscar empleados';
-    } finally {
-      cargando = false;
       notifyListeners();
+    } catch (e) {
+      debugPrint('Error al buscar empleados: \$e');
     }
   }
 
-  @override
-  void dispose() {
-    identificacionController.dispose();
-    apellidosController.dispose();
-    super.dispose();
+  void setArea(String? value) {
+    areaSeleccionada = value;
+    notifyListeners();
+  }
+
+  void setCargo(String? value) {
+    cargoSeleccionado = value;
+    notifyListeners();
+  }
+
+  void limpiarFiltros() {
+    areaSeleccionada = null;
+    cargoSeleccionado = null;
+    resultados = [];
+    notifyListeners();
   }
 }
