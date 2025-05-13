@@ -3,12 +3,13 @@ import 'package:http/http.dart' as http;
 import '../models/usuario.dart';
 
 class ApiService {
+  //static const String baseUrl = 'https://proyecto-nomina-backend.onrender.com';
   static const String baseUrl = 'http://10.0.2.2:8080';
 
   /// Iniciar sesión
   static Future<Usuario?> login(Usuario usuario) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/login/verificar'),
+      Uri.parse('$baseUrl/administrador/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(usuario.toJson()),
     );
@@ -25,7 +26,7 @@ class ApiService {
   /// Registrar usuario
   static Future<String> registrarUsuario(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/usuarios/registrar-usuario'),
+      Uri.parse('$baseUrl/administrador/registrar'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -55,10 +56,11 @@ class ApiService {
 
   /// Buscar empleados
   static Future<List<Map<String, dynamic>>> buscarEmpleados(Map<String, dynamic> filtros) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/personal/busqueda-personas'),
+    final uri = Uri.parse('$baseUrl/personal/busqueda-personas').replace(queryParameters: filtros.map((key, value) => MapEntry(key, value.toString())));
+
+    final response = await http.get(
+      uri,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(filtros),
     );
 
     if (response.statusCode == 200) {
@@ -68,6 +70,7 @@ class ApiService {
       throw Exception('Error al buscar empleados');
     }
   }
+
 
   /// Cargar todos los combos (áreas, cargos, etc.)
   static Future<Map<String, List<Map<String, dynamic>>>> cargarCombos() async {
