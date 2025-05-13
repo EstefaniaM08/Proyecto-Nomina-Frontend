@@ -32,6 +32,11 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+.packages
+.idea/
+*.iml
+*.log
+
 
 # Symbolication related
 app.*.symbols
