@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
 class GeneracionNominaViewModel extends ChangeNotifier {
+  Map<String, dynamic>? datosEmpleado;
+
   Future<Map<String, dynamic>> generarNomina({
     required String identificacion,
     required String fechaPago,
@@ -31,6 +33,25 @@ class GeneracionNominaViewModel extends ChangeNotifier {
     } catch (e) {
       print('❌ Error generando nómina: $e');
       rethrow;
+    }
+  }
+
+  Future<void> cargarDatosEmpleado(String identificacion) async {
+    try {
+      final response = await ApiService.obtenerEmpleadoPorIdentificacion(identificacion);
+      datosEmpleado = {
+        "nombres": response["nombres"],
+        "apellidos": response["apellidos"],
+        "cargo": response["cargo"]?["nombre"] ?? '',
+        "area": response["area"]?["nombre"] ?? '',
+        "tipoContrato": response["tipoContrato"]?["nombre"] ?? '',
+        "banco": response["banco"]?["nombre"] ?? '',
+        "eps": response["eps"]?["nombre"] ?? '',
+        "pensiones": response["pensiones"]?["nombre"] ?? '',
+      };
+      notifyListeners();
+    } catch (e) {
+      print('❌ Error cargando datos del empleado: $e');
     }
   }
 }

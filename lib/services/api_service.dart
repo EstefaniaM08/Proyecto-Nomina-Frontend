@@ -117,5 +117,18 @@ class ApiService {
       throw Exception('Error al generar nómina: ${utf8.decode(response.bodyBytes)}');
     }
   }
+  static Future<Map<String, dynamic>> obtenerEmpleadoPorIdentificacion(String identificacion) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/personal/buscar-persona/$identificacion'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Empleado no encontrado: ${utf8.decode(response.bodyBytes)}');
+    }
+  }
+
 }
 

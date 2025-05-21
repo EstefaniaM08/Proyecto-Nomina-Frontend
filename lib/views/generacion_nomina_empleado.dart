@@ -6,26 +6,39 @@ class GeneracionNominaEmpleadoScreen extends StatefulWidget {
   const GeneracionNominaEmpleadoScreen({super.key});
 
   @override
-  State<GeneracionNominaEmpleadoScreen> createState() =>
-      _GeneracionNominaEmpleadoScreenState();
+  State<GeneracionNominaEmpleadoScreen> createState() => _GeneracionNominaEmpleadoScreenState();
 }
 
-class _GeneracionNominaEmpleadoScreenState
-    extends State<GeneracionNominaEmpleadoScreen> {
-  final TextEditingController identificacionController =
-      TextEditingController();
+class _GeneracionNominaEmpleadoScreenState extends State<GeneracionNominaEmpleadoScreen> {
+  final TextEditingController identificacionController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
   final TextEditingController comisionesController = TextEditingController();
   final TextEditingController viaticosController = TextEditingController();
-  final TextEditingController representacionController =
-      TextEditingController();
+  final TextEditingController representacionController = TextEditingController();
   final TextEditingController extDiurnasController = TextEditingController();
   final TextEditingController extNocturnasController = TextEditingController();
   final TextEditingController extDomDiurController = TextEditingController();
   final TextEditingController extDomNocController = TextEditingController();
 
   Map<String, dynamic>? resultadoNomina;
+  Map<String, dynamic>? datosEmpleado;
   final _formKey = GlobalKey<FormState>();
+
+  void _limpiarFormulario() {
+    identificacionController.clear();
+    fechaController.clear();
+    comisionesController.clear();
+    viaticosController.clear();
+    representacionController.clear();
+    extDiurnasController.clear();
+    extNocturnasController.clear();
+    extDomDiurController.clear();
+    extDomNocController.clear();
+    setState(() {
+      resultadoNomina = null;
+      datosEmpleado = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,26 +62,13 @@ class _GeneracionNominaEmpleadoScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Datos Empleado",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    const Text("Datos Empleado", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
-                    _buildTextField(
-                      identificacionController,
-                      'Identificación',
-                      TextInputType.number,
-                    ),
+                    _buildTextField(identificacionController, 'Identificación', TextInputType.number),
                     TextFormField(
                       controller: fechaController,
                       readOnly: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Fecha',
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
+                      decoration: const InputDecoration(labelText: 'Fecha', suffixIcon: Icon(Icons.calendar_today)),
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,
@@ -77,60 +77,21 @@ class _GeneracionNominaEmpleadoScreenState
                           lastDate: DateTime(2100),
                         );
                         if (picked != null) {
-                          fechaController.text =
-                              '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+                          fechaController.text = '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
                         }
                       },
-                      validator:
-                          (value) =>
-                              value!.isEmpty ? 'Campo obligatorio' : null,
+                      validator: (value) => value!.isEmpty ? 'Campo obligatorio' : null,
                     ),
-
                     const SizedBox(height: 24),
-                    const Text(
-                      "Valores Posible a Pagar",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    const Text("Valores Posible a Pagar", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
-                    _buildTextField(
-                      comisionesController,
-                      'Comisiones',
-                      TextInputType.number,
-                    ),
-                    _buildTextField(
-                      viaticosController,
-                      'Viáticos',
-                      TextInputType.number,
-                    ),
-                    _buildTextField(
-                      representacionController,
-                      'Gastos Representación',
-                      TextInputType.number,
-                    ),
-                    _buildTextField(
-                      extDiurnasController,
-                      'Hor Ext Diurnas',
-                      TextInputType.number,
-                    ),
-                    _buildTextField(
-                      extNocturnasController,
-                      'Hor Ext Nocturnas',
-                      TextInputType.number,
-                    ),
-                    _buildTextField(
-                      extDomDiurController,
-                      'Hor Ext Diu Dominical o Festivos',
-                      TextInputType.number,
-                    ),
-                    _buildTextField(
-                      extDomNocController,
-                      'Hor Ext Noc Dominical o Festivos',
-                      TextInputType.number,
-                    ),
-
+                    _buildTextField(comisionesController, 'Comisiones', TextInputType.number),
+                    _buildTextField(viaticosController, 'Viáticos', TextInputType.number),
+                    _buildTextField(representacionController, 'Gastos Representación', TextInputType.number),
+                    _buildTextField(extDiurnasController, 'Hor Ext Diurnas', TextInputType.number),
+                    _buildTextField(extNocturnasController, 'Hor Ext Nocturnas', TextInputType.number),
+                    _buildTextField(extDomDiurController, 'Hor Ext Diu Dominical o Festivos', TextInputType.number),
+                    _buildTextField(extDomNocController, 'Hor Ext Noc Dominical o Festivos', TextInputType.number),
                     const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -138,32 +99,7 @@ class _GeneracionNominaEmpleadoScreenState
                         ElevatedButton.icon(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              final datos = {
-                                "identificacion":
-                                    identificacionController.text.trim(),
-                                "fechaPago": fechaController.text.trim(),
-                                "comisiones":
-                                    int.tryParse(comisionesController.text) ??
-                                    0,
-                                "viaticos":
-                                    int.tryParse(viaticosController.text) ?? 0,
-                                "gastosRepresentacion":
-                                    int.tryParse(
-                                      representacionController.text,
-                                    ) ??
-                                    0,
-                                "horExtraDiu":
-                                    int.tryParse(extDiurnasController.text) ??
-                                    0,
-                                "horExtraNoc":
-                                    int.tryParse(extNocturnasController.text) ??
-                                    0,
-                                "horExtraDiuDomFes":
-                                    int.tryParse(extDomDiurController.text) ??
-                                    0,
-                                "horExtraNocDomFes":
-                                    int.tryParse(extDomNocController.text) ?? 0,
-                              };
+                              await vm.cargarDatosEmpleado(identificacionController.text.trim());
                               final response = await vm.generarNomina(
                                 identificacion: identificacionController.text,
                                 fechaPago: fechaController.text,
@@ -175,7 +111,10 @@ class _GeneracionNominaEmpleadoScreenState
                                 extDomDiu: extDomDiurController.text,
                                 extDomNoc: extDomNocController.text,
                               );
-                              setState(() => resultadoNomina = response);
+                              setState(() {
+                                resultadoNomina = response;
+                                datosEmpleado = vm.datosEmpleado;
+                              });
                             }
                           },
                           icon: const Icon(Icons.check),
@@ -183,31 +122,24 @@ class _GeneracionNominaEmpleadoScreenState
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           ),
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.cancel),
-                          label: const Text('Cancelar'),
+                          onPressed: _limpiarFormulario,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Limpiar'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
+                            backgroundColor: Colors.grey,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
-                    if (resultadoNomina != null)
-                      _buildResultados(resultadoNomina!),
+                    if (resultadoNomina != null) _buildResultados(resultadoNomina!),
                   ],
                 ),
               ),
@@ -218,20 +150,14 @@ class _GeneracionNominaEmpleadoScreenState
     );
   }
 
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label,
-    TextInputType type,
-  ) {
+  Widget _buildTextField(TextEditingController controller, String label, TextInputType type) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextFormField(
         controller: controller,
         keyboardType: type,
         decoration: InputDecoration(labelText: label),
-        validator:
-            (value) =>
-                value == null || value.isEmpty ? 'Campo obligatorio' : null,
+        validator: (value) => value == null || value.isEmpty ? 'Campo obligatorio' : null,
       ),
     );
   }
@@ -240,43 +166,41 @@ class _GeneracionNominaEmpleadoScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (datosEmpleado != null)
+          _buildResultadoCard(title: 'Empleado', items: {
+            'Nombre': '${datosEmpleado!['nombres']} ${datosEmpleado!['apellidos']}',
+            'Área': datosEmpleado!['area'],
+            'Cargo': datosEmpleado!['cargo'],
+            'Tipo Contrato': datosEmpleado!['tipoContrato'],
+            'Banco': datosEmpleado!['banco'],
+            'EPS': datosEmpleado!['eps'],
+            'Pensión': datosEmpleado!['pensiones'],
+          }),
         const SizedBox(height: 24),
-        _buildResultadoCard(
-          title: 'Devengados',
-          items: {
-            'Salario': data['salario'],
-            'Subsidio de Transporte': data['subsidioTransporte'],
-            'Prima': data['prima'],
-            'Cesantías': data['cesantias'],
-            'Vacaciones': data['vacaciones'],
-            'Valor Horas Extras': data['totValHorExtra'],
-          },
-        ),
-        _buildResultadoCard(
-          title: 'Descuentos',
-          items: {
-            'Salud': data['salud'],
-            'Pensión': data['pension'],
-            'Retención Fuente': data['retencionFuente'],
-            'Fondo Solidario': data['fondoSolid'],
-          },
-        ),
-        _buildResultadoCard(
-          title: 'Totales',
-          items: {
-            'Total Devengados': data['totDevengados'],
-            'Total Descuentos': data['totDescuetos'],
-            'Pago Final': data['pagoFinal'],
-          },
-        ),
+        _buildResultadoCard(title: 'Devengados', items: {
+          'Salario': data['salario'],
+          'Subsidio de Transporte': data['subsidioTransporte'],
+          'Prima': data['prima'],
+          'Cesantías': data['cesantias'],
+          'Vacaciones': data['vacaciones'],
+          'Valor Horas Extras': data['totValHorExtra'],
+        }),
+        _buildResultadoCard(title: 'Descuentos', items: {
+          'Salud': data['salud'],
+          'Pensión': data['pension'],
+          'Retención Fuente': data['retencionFuente'],
+          'Fondo Solidario': data['fondoSolid'],
+        }),
+        _buildResultadoCard(title: 'Totales', items: {
+          'Total Devengados': data['totDevengados'],
+          'Total Descuentos': data['totDescuetos'],
+          'Pago Final': data['pagoFinal'],
+        }),
       ],
     );
   }
 
-  Widget _buildResultadoCard({
-    required String title,
-    required Map<String, dynamic> items,
-  }) {
+  Widget _buildResultadoCard({required String title, required Map<String, dynamic> items}) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -286,10 +210,7 @@ class _GeneracionNominaEmpleadoScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const Divider(thickness: 1),
             ...items.entries.map(
               (entry) => Padding(
@@ -297,19 +218,8 @@ class _GeneracionNominaEmpleadoScreenState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Text(
-                        entry.key,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${entry.value ?? ''}',
-                      style: const TextStyle(fontSize: 15),
-                    ),
+                    Expanded(child: Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15))),
+                    Text('${entry.value ?? ''}', style: const TextStyle(fontSize: 15)),
                   ],
                 ),
               ),
@@ -319,4 +229,4 @@ class _GeneracionNominaEmpleadoScreenState
       ),
     );
   }
-}
+} 
