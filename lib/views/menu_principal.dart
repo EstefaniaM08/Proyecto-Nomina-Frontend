@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'login.dart';
 import 'registro_empleado.dart';
 import 'consulta_empleados.dart';
+import 'generacion_nomina_empleado.dart';
 
 class MenuPrincipalScreen extends StatelessWidget {
   final String email;
@@ -66,20 +67,32 @@ class MenuPrincipalScreen extends StatelessWidget {
               ],
             ),
 
-            // Sección: Pagos (placeholder)
+            // Sección: Pagos
             ExpansionTile(
               leading: const Icon(Icons.attach_money),
               title: const Text("Pagos"),
               children: [
                 ListTile(
-                  leading: const Icon(Icons.add_card),
+                  leading: const Icon(Icons.playlist_add),
                   title: const Text("Generar Nómina"),
-                  onTap: () {},
+                  onTap: () {
+                    // TODO: Navegar a Generar Nómina General
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.person_add_alt_1),
+                  title: const Text("Generar Nómina Empleado"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/generar-nomina-empleado');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.receipt_long),
                   title: const Text("Consultar Nóminas"),
-                  onTap: () {},
+                  onTap: () {
+                    // TODO: Navegar a Consultar Nóminas
+                  },
                 ),
               ],
             ),

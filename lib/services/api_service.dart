@@ -56,7 +56,9 @@ class ApiService {
 
   /// Buscar empleados
   static Future<List<Map<String, dynamic>>> buscarEmpleados(Map<String, dynamic> filtros) async {
-    final uri = Uri.parse('$baseUrl/personal/busqueda-personas').replace(queryParameters: filtros.map((key, value) => MapEntry(key, value.toString())));
+    final uri = Uri.parse('$baseUrl/personal/busqueda-personas').replace(
+      queryParameters: filtros.map((key, value) => MapEntry(key, value.toString())),
+    );
 
     final response = await http.get(
       uri,
@@ -70,7 +72,6 @@ class ApiService {
       throw Exception('Error al buscar empleados');
     }
   }
-
 
   /// Cargar todos los combos (áreas, cargos, etc.)
   static Future<Map<String, List<Map<String, dynamic>>>> cargarCombos() async {
@@ -101,4 +102,33 @@ class ApiService {
       rethrow;
     }
   }
+
+  /// Generar nómina
+  static Future<Map<String, dynamic>> pagarNomina(Map<String, dynamic> data) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/pagonomina/pago-nomina'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Error al generar nómina: ${utf8.decode(response.bodyBytes)}');
+    }
+  }
+  static Future<Map<String, dynamic>> obtenerEmpleadoPorIdentificacion(String identificacion) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/personal/buscar-persona/$identificacion'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Empleado no encontrado: ${utf8.decode(response.bodyBytes)}');
+    }
+  }
+
 }
+
