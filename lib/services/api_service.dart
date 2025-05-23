@@ -55,9 +55,13 @@ class ApiService {
   }
 
   /// Buscar empleados
-  static Future<List<Map<String, dynamic>>> buscarEmpleados(Map<String, dynamic> filtros) async {
+  static Future<List<Map<String, dynamic>>> buscarEmpleados(
+    Map<String, dynamic> filtros,
+  ) async {
     final uri = Uri.parse('$baseUrl/personal/busqueda-personas').replace(
-      queryParameters: filtros.map((key, value) => MapEntry(key, value.toString())),
+      queryParameters: filtros.map(
+        (key, value) => MapEntry(key, value.toString()),
+      ),
     );
 
     final response = await http.get(
@@ -90,12 +94,24 @@ class ApiService {
       );
 
       return {
-        'areas': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[0].bodyBytes))),
-        'cargos': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[1].bodyBytes))),
-        'bancos': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[2].bodyBytes))),
-        'eps': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[3].bodyBytes))),
-        'pensiones': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[4].bodyBytes))),
-        'contratos': List<Map<String, dynamic>>.from(jsonDecode(utf8.decode(responses[5].bodyBytes))),
+        'areas': List<Map<String, dynamic>>.from(
+          jsonDecode(utf8.decode(responses[0].bodyBytes)),
+        ),
+        'cargos': List<Map<String, dynamic>>.from(
+          jsonDecode(utf8.decode(responses[1].bodyBytes)),
+        ),
+        'bancos': List<Map<String, dynamic>>.from(
+          jsonDecode(utf8.decode(responses[2].bodyBytes)),
+        ),
+        'eps': List<Map<String, dynamic>>.from(
+          jsonDecode(utf8.decode(responses[3].bodyBytes)),
+        ),
+        'pensiones': List<Map<String, dynamic>>.from(
+          jsonDecode(utf8.decode(responses[4].bodyBytes)),
+        ),
+        'contratos': List<Map<String, dynamic>>.from(
+          jsonDecode(utf8.decode(responses[5].bodyBytes)),
+        ),
       };
     } catch (e) {
       print('❌ Error cargando combos: $e');
@@ -104,7 +120,9 @@ class ApiService {
   }
 
   /// Generar nómina
-  static Future<Map<String, dynamic>> pagarNomina(Map<String, dynamic> data) async {
+  static Future<Map<String, dynamic>> pagarNomina(
+    Map<String, dynamic> data,
+  ) async {
     final response = await http.post(
       Uri.parse('$baseUrl/pagonomina/pago-nomina'),
       headers: {'Content-Type': 'application/json'},
@@ -114,10 +132,16 @@ class ApiService {
     if (response.statusCode == 200) {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception('Error al generar nómina: ${utf8.decode(response.bodyBytes)}');
+      throw Exception(
+        'Error al generar nómina: ${utf8.decode(response.bodyBytes)}',
+      );
     }
   }
-  static Future<Map<String, dynamic>> obtenerEmpleadoPorIdentificacion(String identificacion) async {
+
+  /// Obtener empleado por identificación
+  static Future<Map<String, dynamic>> obtenerEmpleadoPorIdentificacion(
+    String identificacion,
+  ) async {
     final response = await http.get(
       Uri.parse('$baseUrl/personal/buscar-persona/$identificacion'),
       headers: {'Content-Type': 'application/json'},
@@ -126,9 +150,38 @@ class ApiService {
     if (response.statusCode == 200) {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception('Empleado no encontrado: ${utf8.decode(response.bodyBytes)}');
+      throw Exception(
+        'Empleado no encontrado: ${utf8.decode(response.bodyBytes)}',
+      );
     }
   }
 
-}
+  /// Actualizar datos del empleado
+  static Future<void> actualizarEmpleado(Map<String, dynamic> data) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/personal/actualizar-persona'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
 
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Error al actualizar empleado: ${utf8.decode(response.bodyBytes)}',
+      );
+    }
+  }
+
+  /// Desactivar empleado por ID
+  static Future<void> desactivarEmpleado(dynamic identificacion) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/personal/desactivar-persona/$identificacion'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Error al desactivar empleado: ${utf8.decode(response.bodyBytes)}',
+      );
+    }
+  }
+}
