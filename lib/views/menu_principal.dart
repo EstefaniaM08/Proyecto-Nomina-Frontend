@@ -3,6 +3,7 @@ import 'login.dart';
 import 'registro_empleado.dart';
 import 'consulta_empleados.dart';
 import 'generacion_nomina_empleado.dart';
+import 'modificar_empleado.dart';
 
 class MenuPrincipalScreen extends StatelessWidget {
   final String email;
@@ -62,6 +63,14 @@ class MenuPrincipalScreen extends StatelessWidget {
                         builder: (_) => const ConsultaEmpleadosScreen(),
                       ),
                     );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text("Modificar Empleado"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/modificar-empleado');
                   },
                 ),
               ],
