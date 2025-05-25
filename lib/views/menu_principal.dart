@@ -100,7 +100,8 @@ class MenuPrincipalScreen extends StatelessWidget {
                   leading: const Icon(Icons.receipt_long),
                   title: const Text("Consultar Nóminas"),
                   onTap: () {
-                    // TODO: Navegar a Consultar Nóminas
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/consulta-nominas');
                   },
                 ),
               ],
@@ -116,31 +117,34 @@ class MenuPrincipalScreen extends StatelessWidget {
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Cerrar sesión"),
-                    content: const Text("¿Estás seguro de que deseas cerrar sesión?"),
-                    actions: [
-                      TextButton(
-                        child: const Text("Cancelar"),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text("Cerrar sesión"),
+                        content: const Text(
+                          "¿Estás seguro de que deseas cerrar sesión?",
                         ),
-                        child: const Text("Cerrar sesión"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const LoginScreen(),
+                        actions: [
+                          TextButton(
+                            child: const Text("Cancelar"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
                             ),
-                          );
-                        },
+                            child: const Text("Cerrar sesión"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
                 );
               },
             ),
