@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../services/api_service.dart';
 
 class ConsultaNominasViewModel extends ChangeNotifier {
