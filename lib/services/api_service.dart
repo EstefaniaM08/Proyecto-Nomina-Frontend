@@ -5,9 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import '../models/usuario.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8080';
+  static const String baseUrl = 'https://proyecto-nomina-backend.onrender.com';
+  //static const String baseUrl = 'http://10.0.2.2:8080';
 
   /// Iniciar sesión
   static Future<Usuario?> login(Usuario usuario) async {
@@ -255,7 +257,65 @@ class ApiService {
       rethrow;
     }
   }
-  
+
+  static Future<void> generarNominaDesdeExcel(
+    File excelFile,
+    BuildContext context,
+  ) async {
+    final uri = Uri.parse('$baseUrl/pagonomina/pago-nomina/excel');
+    final request = http.MultipartRequest('POST', uri);
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'file',
+        excelFile.path,
+        contentType: MediaType(
+          'application',
+          'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ),
+      ),
+    );
+
+    try {
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Nómina generada exitosamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        final responseBody = await response.stream.bytesToString();
+        String mensajeError = '❌ Error al generar nómina';
+
+        try {
+          final decoded = jsonDecode(responseBody);
+          if (decoded is Map<String, dynamic>) {
+            mensajeError = decoded['message'] ??
+                decoded['error'] ??
+                decoded['path'] ??
+                mensajeError;
+          }
+        } catch (_) {
+          mensajeError = responseBody;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Error al generar nómina: $mensajeError'),
+            backgroundColor: Colors.red.shade400,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Error de conexión: $e'),
+          backgroundColor: Colors.red.shade400,
+        ),
+      );
+    }
+  }
 }
-
-
