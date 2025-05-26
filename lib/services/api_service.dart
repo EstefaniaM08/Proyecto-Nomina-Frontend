@@ -8,7 +8,8 @@ import '../models/usuario.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8080';
+  static const String baseUrl = 'https://proyecto-nomina-backend.onrender.com';
+  //static const String baseUrl = 'http://10.0.2.2:8080';
 
   /// Iniciar sesión
   static Future<Usuario?> login(Usuario usuario) async {
