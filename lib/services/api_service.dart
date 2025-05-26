@@ -261,7 +261,7 @@ class ApiService {
     File excelFile,
     BuildContext context,
   ) async {
-    final uri = Uri.parse('$baseUrl/pagonomina/generar-desde-excel');
+    final uri = Uri.parse('$baseUrl/pagonomina/pago-nomina/excel');
     final request = http.MultipartRequest('POST', uri);
 
     request.files.add(
