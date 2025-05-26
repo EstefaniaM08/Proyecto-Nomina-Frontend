@@ -85,9 +85,11 @@ class MenuPrincipalScreen extends StatelessWidget {
                   leading: const Icon(Icons.playlist_add),
                   title: const Text("Generar Nómina"),
                   onTap: () {
-                    // TODO: Navegar a Generar Nómina General
+                    Navigator.pop(context); // Cierra el Drawer
+                    Navigator.pushNamed(context, '/generar-nomina');
                   },
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.person_add_alt_1),
                   title: const Text("Generar Nómina Empleado"),
